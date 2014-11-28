@@ -227,7 +227,7 @@ define([
   var TableComponent = UnmanagedComponent.extend({
   
   
-    extensionPoints: base.extensionPoints << "fnDrawCallback",
+    extensionPoints: this.extensionPoints.push("fnDrawCallback"),
   
     ph: undefined,
 
