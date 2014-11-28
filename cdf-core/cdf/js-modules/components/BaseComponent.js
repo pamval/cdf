@@ -41,6 +41,7 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
       this.dashboard = dashboard;
       
       if (this.mixins && this.mixins.length > 0) {
+        this.extensionPoints = this.extensionPoints.concat(this._extensionPoints);
         _.each(this.extensionPoints, function (param, index) {
             this["mixin" + param] = this[param];
         }, this);
@@ -53,7 +54,7 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
             
             var impl = (typeof mixinDefinition[0] == "function") ?  
                 mixinDefinition[0] : 
-                dashboard.getAddIn("All", "component", mixinDefinition[0]).implementation;                        
+                dashboard.getAddIn("All", "component", mixinDefinition[0]).mixinImplementation;                        
             impl.call(this, mixinDefinition[1]);
             _.each(this.extensionPoints, function (param, index) {
                 this[param + x] = this[param];

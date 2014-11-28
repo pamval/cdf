@@ -204,10 +204,12 @@
 
       <div id="code">
         <textarea cols="80" rows="40" id="samplecode">
-require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent'],
-  function(Dashboard, TableComponent) {
+require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent', 'cdf/addIns/SelectableTableAddIn'],
+  function(Dashboard, TableComponent, SelectableTableAddIn) {
 
     var dashboard = new Dashboard();
+
+    dashboard.registerAddIn("All","Component", SelectableTableAddIn);
 
     var topTenCustomerDefinition = {
       colHeaders: ["Customers","Sales"],
@@ -230,7 +232,8 @@ require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent'],
       type: "tableComponent",
       chartDefinition: topTenCustomerDefinition,
       htmlObject: "sampleObject",
-      executeAtStart: true
+      executeAtStart: true,
+      mixins: [["selectableTable", {}]]
     }));
     dashboard.init();
 });

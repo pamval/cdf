@@ -18,27 +18,80 @@ define(['../dashboard/Dashboard', '../Logger'],
     var componentTypes = {
          Dummy : {
          
-               name: "dummy",
-               label: "Dummy",
-               implementation: function (options) {
-                    this.preExecution = function () {
-                        console.log('preExecution Mixin 1');
-                        this.preExecAppender += "MR1";
-                    };
+            name: "dummy",
+            label: "Dummy",
+            defaults: {}, //Default options
 
-                    this.preChange = function () {
-                        console.log('preChange Mixin 1');
-                        this.preChangeAppender += "MR1";
-                    };
+            /**
+             * Initialization function for the component add-in (Optional)
+             *
+             */            
+            init: function () {
+            
+               
+            },
+            
+            /**
+             * Validation function (for future use)
+             *
+             * @returns returns an array of component names where this add-in can be used 
+             *  or null if applicable to all
+             */            
+            applicableComponents: function () {
+                return null;            
+            },
+            
+            
+            /**
+             * Implementation function for the add-in
+             * The function will be executed with the component as this, so that the component
+             * can be extended with whatever new functionality people want to use.
+             * 
+             * @param options - Configuration options for the component add-in
+             */
+            mixinImplementation: function (options) {
+                this.preExecution = function () {
+                    console.log('preExecution Mixin 1');
+                    this.preExecAppender += "MR1";
+                };
+
+                this.preChange = function () {
+                    console.log('preChange Mixin 1');
+                    this.preChangeAppender += "MR1";
+                };
                     
                                         
-                    this.postExecution = function () {
-                        console.log("PostExecution Mixin 1- my component name is " + this.name);
-                        this.postExecAppender += "MR1";
-                    };    
-                    return this;
-                }
-                
+                this.postExecution = function () {
+                    console.log("PostExecution Mixin 1- my component name is " + this.name);
+                    this.postExecAppender += "MR1";
+                };    
+                return this;
+            },
+            
+            
+            /**
+             * Optionally, the comopnent add-in can also expose an add-in of a different type.
+             * This can be useful for exposing, for instance, a col type that should be used along 
+             * with a particular component add-in.
+             *
+             */
+             addInType: "Table",
+             addInSubType: "ColType",
+             
+             implementation: function(tgt, st, opt){
+                var $tgt = $(tgt),
+                $container = $("<div>");
+                $tgt.empty().append($container);
+                $container.text(st.value).addClass("clippedText").attr("title",opt.showTooltip ? st.value : "");
+                $container.css(opt.style);
+                if(opt.useTipsy) {
+                  $container.tipsy({
+                    gravity: 's', 
+                    html:false
+                  });
+            }             
+             
+             
         }
     };
 

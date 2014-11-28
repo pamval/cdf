@@ -18,7 +18,7 @@ module.exports = function(config) {
       { pattern: 'cdf/js-modules/**/*.js', included: false },
       { pattern: 'test-js/**/*.ext.js', included: true },
       'test-js/testUtils.js',
-      { pattern: 'test-js/**/ComponentWithMixin-spec.js', included: false },
+      { pattern: 'test-js/**/*-spec.js', included: false },
       'config/context.js',
       'build-res/requireCfg-raw.js',
       'config/require-config.js'

@@ -38,6 +38,10 @@ define([
   
   _.each(ComponentAddIns, function (val, prop) {
     globalAddIns.register(normalizeAddInKey("All","component"), val.name, val);
+    //Does the component add in also expose another type of add-in ?
+    if (val.addInType) {
+        globalAddIns.register(normalizedAddInKey(val.addInType, val.addInSubType), val.name, new AddIn(val));
+    }
   });
 
   Dashboard.implement({
