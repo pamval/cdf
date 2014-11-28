@@ -17,14 +17,27 @@ define([
   './Container',
   './Utils',
   '../lib/underscore',
+  '../addIns/componentAddIns',
   '../addIns/colTypes'], //While addIns don't move to a lower level (e.g. TableComponent), load colTypes at a higher level
-  function(AddIn, Dashboard, Container, Utils, _, ColTypes) {
+  function(AddIn, Dashboard, Container, Utils, _, ComponentAddIns, ColTypes) {
 
   var globalAddIns = new Container();
+  
+  function normalizeAddInKey (key, subKey) {
+    if (key.indexOf('Component', key.length - 'Component'.length) !== -1) 
+        key = key.substring(0, key.length - 'Component'.length);  
+    key = key.charAt(0).toUpperCase() + key.substring(1);  
+    if(subKey) { key += "." + subKey; }  
+    return key;    
+  }
 
   // TODO: Avoid loading all colType addins globally after CDE's renderer knows wich AddIns it should pre-load REMOVE ASAP !!!
   _.each(ColTypes, function(val, prop) {
-    globalAddIns.register("Table.colType", val.name, new AddIn(val));
+    globalAddIns.register(normalizeAddInKey("Table", "colType"), val.name, new AddIn(val));
+  });
+  
+  _.each(ComponentAddIns, function (val, prop) {
+    globalAddIns.register(normalizeAddInKey("All","component"), val.name, val);
   });
 
   Dashboard.implement({
@@ -33,38 +46,27 @@ define([
       this.addIns = Utils.clone(globalAddIns);
     },
   
-  
-    //Normalization - Ensure component does not finish with component and capitalize first letter
-    normalizeAddInKey : function(key, subKey) {
-        if (key.indexOf('Component', key.length - 'Component'.length) !== -1) 
-          key = key.substring(0, key.length - 'Component'.length);  
-        key = key.charAt(0).toUpperCase() + key.substring(1);
-  
-        if(subKey) { key += "." + subKey; }
-  
-      return key;
-    },
-  
+    
     registerGlobalAddIn : function(type,subType,addIn){
-      var type = this.normalizeAddInKey(type, subType),
+      var type = normalizeAddInKey(type, subType),
           name = addIn.getName ? addIn.getName() : null;
       globalAddIns.register(type, name, addIn);
     },
 
     registerAddIn : function(type,subType,addIn){
-      var type = this.normalizeAddInKey(type, subType),
+      var type = normalizeAddInKey(type, subType),
           name = addIn.getName ? addIn.getName() : null;
       this.addIns.register(type, name, addIn);
     },
 
   
     hasAddIn : function(type,subType,addInName){
-      var type = this.normalizeAddInKey(type, subType);
+      var type = normalizeAddInKey(type, subType);
       return Boolean(this.addIns && this.addIns.has(type,addInName));
     },
   
     getAddIn : function(type,subType,addInName){
-      var type = this.normalizeAddInKey(type, subType);
+      var type = normalizeAddInKey(type, subType);
       try {
         var addIn = this.addIns.get(type,addInName);
         return addIn;
@@ -82,7 +84,7 @@ define([
     
     
     listAddIns : function(type, subType) {
-    var type = this.normalizeAddInKey(type, subType);
+    var type = normalizeAddInKey(type, subType);
       var addInList = [];
       try {
         return this.addIns.listType(type);

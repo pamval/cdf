@@ -19,7 +19,7 @@ module.exports = function(config) {
       { pattern: 'test-js/**/*.ext.js', included: true },
       'test-js/testUtils.js',
       { pattern: 'test-js/**/*.js', included: false },
-      { pattern: '../cdf-pentaho-base/test-js/**/*.js', included: false },
+      { pattern: '../cdf-pentaho-base/test-js/**/TableComponent*.js', included: false },
       'config/context.js',
       'test-res/requireCfg-raw.js',
       'config/require-config.js'

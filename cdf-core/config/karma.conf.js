@@ -18,7 +18,7 @@ module.exports = function(config) {
       { pattern: 'cdf/js-modules/**/*.js', included: false },
       { pattern: 'test-js/**/*.ext.js', included: true },
       'test-js/testUtils.js',
-      { pattern: 'test-js/**/*-spec.js', included: false },
+      { pattern: 'test-js/**/ComponentWithMixin-spec.js', included: false },
       'config/context.js',
       'build-res/requireCfg-raw.js',
       'config/require-config.js'
@@ -69,7 +69,7 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
     // The configuration setting tells Karma how long to wait (in milliseconds) after any changes have occurred before starting the test process again.
     autoWatchBatchDelay: 250,
@@ -91,7 +91,7 @@ module.exports = function(config) {
     
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: true,
+    singleRun: false,
 
     plugins: [
       'karma-jasmine',

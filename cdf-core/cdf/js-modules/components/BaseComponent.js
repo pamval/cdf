@@ -17,6 +17,8 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
   var BaseComponent = Base.extend(Backbone.Events).extend({
   
     //type : "unknown",
+    extensionPoints: ["preExecution", "postExecution", "preChange", "postChange", "postFetch"],
+    
     visible: true,
     isManaged: true,
     timerStart: 0,
@@ -37,7 +39,55 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
     constructor: function(dashboard, properties) {    
       this.extend(properties);
       this.dashboard = dashboard;
+      
+      if (this.mixins && this.mixins.length > 0) {
+        _.each(this.extensionPoints, function (param, index) {
+            this["mixin" + param] = this[param];
+        }, this);
+        var mixinsLength = this.mixins.length;
+        for (var x = 0; x < mixinsLength; x++) {
+            var mixinDefinition = this.mixins[x];
+            _.each(this.extensionPoints, function (param, index) {
+                delete this[param];
+            }, this);
+            
+            var impl = (typeof mixinDefinition[0] == "function") ?  
+                mixinDefinition[0] : 
+                dashboard.getAddIn("All", "component", mixinDefinition[0]).implementation;                        
+            impl.call(this, mixinDefinition[1]);
+            _.each(this.extensionPoints, function (param, index) {
+                this[param + x] = this[param];
+            }, this);            
+        }
+        _.each(this.extensionPoints, function (param, index) {
+            this._addMixedInExtensionPoint(param, mixinsLength);
+        }, this);                    
+      }
     },
+  
+    _addMixedInExtensionPoint : function (extensionPoint, mixinsLength) {
+        this[extensionPoint] = function () {
+            var res;
+            if (this["mixin" + extensionPoint]) {
+                res = this["mixin" + extensionPoint].call(this, arguments);
+            }    
+            for (var x = 0; x < mixinsLength; x++) {
+                if (this[extensionPoint + x]) {
+                    try {
+                        res = this[extensionPoint + x].call(this, arguments);
+                    } catch (e) {
+                        Logger.error("Exception while calling component addin " + (x+1) 
+                            + " in component " + this.name + " for phase " 
+                            + extensionPoint + ": " + e);
+                    }
+                }
+            }
+            return res;
+        };
+        
+    
+    },
+  
   
     placeholder: function(selector) {
       var ho = this.htmlObject;
