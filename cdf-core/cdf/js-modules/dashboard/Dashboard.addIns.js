@@ -12,14 +12,11 @@
  */
 
 define([
-  '../AddIn',
   './Dashboard',
   './Container',
-  './Utils',
-  '../lib/underscore',
-  '../addIns/componentAddIns',
-  '../addIns/colTypes'], //While addIns don't move to a lower level (e.g. TableComponent), load colTypes at a higher level
-  function(AddIn, Dashboard, Container, Utils, _, ComponentAddIns, ColTypes) {
+  './Utils'],
+  function(Dashboard, Container, Utils) {
+
 
   var globalAddIns = new Container();
   
@@ -31,18 +28,10 @@ define([
     return key;    
   }
 
-  // TODO: Avoid loading all colType addins globally after CDE's renderer knows wich AddIns it should pre-load REMOVE ASAP !!!
-  _.each(ColTypes, function(val, prop) {
-    globalAddIns.register(normalizeAddInKey("Table", "colType"), val.name, new AddIn(val));
-  });
-  
-  _.each(ComponentAddIns, function (val, prop) {
-    globalAddIns.register(normalizeAddInKey("All","component"), val.name, val);
-    //Does the component add in also expose another type of add-in ?
-    if (val.addInType) {
-        globalAddIns.register(normalizedAddInKey(val.addInType, val.addInSubType), val.name, new AddIn(val));
-    }
-  });
+  Dashboard.registerGlobalAddIn = function(type, addIn) {
+    globalAddIns.register(type, addIn.getName(), addIn);
+  };
+
 
   Dashboard.implement({
       
@@ -50,20 +39,19 @@ define([
       this.addIns = Utils.clone(globalAddIns);
     },
   
-    
     registerGlobalAddIn : function(type,subType,addIn){
       var type = normalizeAddInKey(type, subType),
           name = addIn.getName ? addIn.getName() : null;
       globalAddIns.register(type, name, addIn);
     },
 
-    registerAddIn : function(type,subType,addIn){
+    registerAddIn : function(type,subType,addIn) {
       var type = normalizeAddInKey(type, subType),
           name = addIn.getName ? addIn.getName() : null;
       this.addIns.register(type, name, addIn);
     },
-
   
+
     hasAddIn : function(type,subType,addInName){
       var type = normalizeAddInKey(type, subType);
       return Boolean(this.addIns && this.addIns.has(type,addInName));
@@ -72,20 +60,19 @@ define([
     getAddIn : function(type,subType,addInName){
       var type = normalizeAddInKey(type, subType);
       try {
-        var addIn = this.addIns.get(type,addInName);
+        var addIn = this.addIns.get(type, addInName);
         return addIn;
-      } catch (e) {
+      } catch(e) {
         return null;
       }
     },
   
     setAddInDefaults : function(type, subType, addInName, defaults) {
-      var addIn = this.getAddIn(type, subType,addInName);
+      var addIn = this.getAddIn(type, subType, addInName);
       if(addIn) {
         addIn.setDefaults(defaults);
       }
     },
-    
     
     listAddIns : function(type, subType) {
     var type = normalizeAddInKey(type, subType);

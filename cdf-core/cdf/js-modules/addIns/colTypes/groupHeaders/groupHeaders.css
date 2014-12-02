@@ -11,18 +11,22 @@
  * the license for the specific language governing your rights and limitations.
  */
 
-define('cdf/components/JFreechartComponent.ext', [], function() {
+.hiddenCol {
+  display:none;  
+}
 
-  var JFreeChartComponentExt = {
+.groupHeader {
+  background: #DDDDFF;  
+}
 
-    getOpenFlashChart: function(result) {
-      return result;
-    },
-    getCaption: function(cd, myself, exportFile, cdfComponent) {
-      return;
-    }
+.groupHeader.group0 {
+  background: #FFDDDD;
+}
 
-  };
+.groupHeader.group1 {
+  background: #DDFFDD;
+}
 
-  return JFreeChartComponentExt;
-});
+.groupHeader.group2 {
+  background: #DDDDFF;  
+}
