@@ -51,11 +51,10 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
             _.each(this.extensionPoints, function (param, index) {
                 delete this[param];
             }, this);
-            
-            var impl = (typeof mixinDefinition[0] == "function") ?  
-                mixinDefinition[0] : 
-                dashboard.getAddIn("All", "component", mixinDefinition[0]).mixinImplementation;                        
-            impl.call(this, mixinDefinition[1]);
+
+
+          var impl = this.getAddIn("mixin", mixinDefinition[0]).call(null, this, mixinDefinition[1]);
+            impl.call(this);
             _.each(this.extensionPoints, function (param, index) {
                 this[param + x] = this[param];
             }, this);            
@@ -180,12 +179,18 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
 
     getAddIn: function(slot,addIn) {
       var type = typeof this.type == "function" ? this.type() : this.type;
-      return this.dashboard.getAddIn(type,slot,addIn);
+      var addInImpl = this.dashboard.getAddIn(type,slot,addIn);
+      if (addInImpl != null) {
+        return addInImpl;
+      }
+      return this.dashboard.getAddIn("Base", slot, addIn);
     },
 
     hasAddIn: function(slot,addIn) {
       var type = typeof this.type == "function" ? this.type() : this.type;
-      return this.dashboard.hasAddIn(type,slot,addIn);
+      var result = this.dashboard.hasAddIn(type,slot,addIn);
+      if (!result)
+        return this.dashboard.hasAddIn("Base",slot,addIn);
     },
 
     getValuesArray : function() {

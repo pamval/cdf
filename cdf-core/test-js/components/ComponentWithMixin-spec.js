@@ -11,8 +11,8 @@
  * the license for the specific language governing your rights and limitations.
  */
 
-define(["cdf/Dashboard", "cdf/components/TextComponent"],
-  function(Dashboard, TextComponent) {
+define(["cdf/Dashboard", "cdf/components/TextComponent", "cdf/AddIn"],
+  function(Dashboard, TextComponent, AddIn) {
 
   /**
    * ## The Component with mixins
@@ -22,8 +22,89 @@ define(["cdf/Dashboard", "cdf/components/TextComponent"],
     var dashboard = new Dashboard();
 
     dashboard.init();
-    
-    
+      dashboard.registerAddIn("Base", "mixin", new AddIn({
+          name: "dummy",
+          label: "Dummy",
+          defaults: {}, //Default options
+
+          /**
+           * Initialization function for the component add-in (Optional)
+           *
+           */
+          init: function () {
+
+
+          },
+
+
+          /**
+           * Implementation function for the add-in
+           * Should return a function that will be executed with the component as this, so that the component
+           * can be extended with whatever new functionality people want to use.
+           *
+           * @param tgt - Target DOM element - not used for this type of add-in
+           * @param st - Context for the add-in - not used for this type of add-in
+           * @param options - Configuration options for the component add-in
+           */
+          implementation: function (tgt, st, opt) {
+              return function () {
+                  this.preExecution = function () {
+                      console.log('preExecution Mixin 1');
+                      this.preExecAppender += "MR1";
+                  };
+
+                  this.preChange = function () {
+                      console.log('preChange Mixin 1');
+                      this.preChangeAppender += "MR1";
+                  };
+
+
+                  this.postExecution = function () {
+                      console.log("PostExecution Mixin 1- my component name is " + this.name);
+                      this.postExecAppender += "MR1";
+                  };
+                  return this;
+              }
+          }
+      }));
+
+    dashboard.registerAddIn("Base", "mixin", new AddIn({
+        name: "dummy1",
+        label: "Dummy 1",
+        implementation: function(tgt, st, options) {
+            return function () {
+                this.preExecution = function () {
+                    console.log("preExecution Mixin 2 - " + options.test);
+                    this.preExecAppender += "M2";
+                };
+
+                this.postChange = function () {
+                    console.log("postChange mixin 2");
+                    this.postChangeAppender += "M2";
+                };
+            };
+        }
+    }));
+
+
+      dashboard.registerAddIn("Base", "mixin", new AddIn({
+          name: "dummy2",
+          label: "Dummy 2",
+          implementation: function(tgt, st, options) {
+              return function () {
+                  this.preExecution = function () {
+                      console.log("preExecution Mixin 2 - " + options.test);
+                      throw "Mixin Error";
+                  };
+
+                  this.postChange = function () {
+                      console.log("postChange mixin 2");
+                      this.postChangeAppender += "M2";
+                  };
+              }
+          }
+      }));
+
     var textComponent = new TextComponent(dashboard, {
       name: "textComponent",
       type: "textComponent",
@@ -57,18 +138,7 @@ define(["cdf/Dashboard", "cdf/components/TextComponent"],
       mixins: [["dummy", 
                 {}
                 ],
-                [
-                function (options) {
-                    this.preExecution = function () {
-                        console.log("preExecution Mixin 2 - " + options.test);
-                        this.preExecAppender += "M2";
-                    };
-                    
-                    this.postChange = function () {
-                        console.log("postChange mixin 2");
-                        this.postChangeAppender += "M2";
-                    };
-                },
+                ["dummy1",
                 {test : "Teste"}
                 ]
               ],
@@ -109,18 +179,7 @@ define(["cdf/Dashboard", "cdf/components/TextComponent"],
         this.postChangeAppender += "C";
       },
       
-      mixins: [[
-                function (options) {
-                    this.preExecution = function () {
-                        console.log("preExecution Mixin 2 - " + options.test);
-                        throw "Mixin Error";
-                    };
-                    
-                    this.postChange = function () {
-                        console.log("postChange mixin 2");
-                        this.postChangeAppender += "M2";
-                    };
-                },
+      mixins: [["dummy2",
                 {test : "Teste"}
                 ],
                 ["dummy", 
