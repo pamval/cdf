@@ -16,8 +16,8 @@ define(['../dashboard/Dashboard', '../Logger'],
     function (Dashboards, Logger) {
     
     var componentTypes = {
-         Dummy : {
-         
+        Dummy: {
+
             name: "dummy",
             label: "Dummy",
             defaults: {}, //Default options
@@ -25,28 +25,28 @@ define(['../dashboard/Dashboard', '../Logger'],
             /**
              * Initialization function for the component add-in (Optional)
              *
-             */            
+             */
             init: function () {
-            
-               
+
+
             },
-            
+
             /**
              * Validation function (for future use)
              *
-             * @returns returns an array of component names where this add-in can be used 
+             * @returns returns an array of component names where this add-in can be used
              *  or null if applicable to all
-             */            
+             */
             applicableComponents: function () {
-                return null;            
+                return null;
             },
-            
-            
+
+
             /**
              * Implementation function for the add-in
              * The function will be executed with the component as this, so that the component
              * can be extended with whatever new functionality people want to use.
-             * 
+             *
              * @param options - Configuration options for the component add-in
              */
             mixinImplementation: function (options) {
@@ -59,41 +59,42 @@ define(['../dashboard/Dashboard', '../Logger'],
                     console.log('preChange Mixin 1');
                     this.preChangeAppender += "MR1";
                 };
-                    
-                                        
+
+
                 this.postExecution = function () {
                     console.log("PostExecution Mixin 1- my component name is " + this.name);
                     this.postExecAppender += "MR1";
-                };    
+                };
                 return this;
             },
-            
-            
+
+
             /**
              * Optionally, the comopnent add-in can also expose an add-in of a different type.
-             * This can be useful for exposing, for instance, a col type that should be used along 
+             * This can be useful for exposing, for instance, a col type that should be used along
              * with a particular component add-in.
              *
              */
-             addInType: "Table",
-             addInSubType: "ColType",
-             
-             implementation: function(tgt, st, opt){
+            addInType: "Table",
+            addInSubType: "ColType",
+
+            implementation: function (tgt, st, opt) {
                 var $tgt = $(tgt),
-                $container = $("<div>");
+                    $container = $("<div>");
                 $tgt.empty().append($container);
-                $container.text(st.value).addClass("clippedText").attr("title",opt.showTooltip ? st.value : "");
+                $container.text(st.value).addClass("clippedText").attr("title", opt.showTooltip ? st.value : "");
                 $container.css(opt.style);
-                if(opt.useTipsy) {
-                  $container.tipsy({
-                    gravity: 's', 
-                    html:false
-                  });
-            }             
-             
-             
+                if (opt.useTipsy) {
+                    $container.tipsy({
+                        gravity: 's',
+                        html: false
+                    });
+                }
+
+
+            }
         }
-    };
+    }
 
 
     return componentTypes;

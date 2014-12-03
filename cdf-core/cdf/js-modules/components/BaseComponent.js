@@ -70,12 +70,12 @@ define(["../lib/Base", "../lib/jquery", "../lib/underscore", "../lib/backbone", 
         this[extensionPoint] = function () {
             var res;
             if (this["mixin" + extensionPoint]) {
-                res = this["mixin" + extensionPoint].call(this, arguments);
+                res = this["mixin" + extensionPoint].apply(this, arguments);
             }    
             for (var x = 0; x < mixinsLength; x++) {
                 if (this[extensionPoint + x]) {
                     try {
-                        res = this[extensionPoint + x].call(this, arguments);
+                        res = this[extensionPoint + x].apply(this, arguments);
                     } catch (e) {
                         Logger.error("Exception while calling component addin " + (x+1) 
                             + " in component " + this.name + " for phase " 

@@ -28,9 +28,12 @@ define([
     return key;    
   }
 
-  Dashboard.registerGlobalAddIn = function(type, addIn) {
-    globalAddIns.register(type, addIn.getName(), addIn);
+  Dashboard.registerGlobalAddIn = function(type, subType, addIn) {
+      var type = normalizeAddInKey(type, subType),
+          name = addIn.getName ? addIn.getName() : null;
+      globalAddIns.register(type, name, addIn);
   };
+
 
 
   Dashboard.implement({
@@ -40,9 +43,7 @@ define([
     },
   
     registerGlobalAddIn : function(type,subType,addIn){
-      var type = normalizeAddInKey(type, subType),
-          name = addIn.getName ? addIn.getName() : null;
-      globalAddIns.register(type, name, addIn);
+        Dashboard.registerGlobalAddIn(type, subType, addIn);
     },
 
     registerAddIn : function(type,subType,addIn) {

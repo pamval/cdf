@@ -209,11 +209,11 @@ require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent', 'cdf/addIns
 
     var dashboard = new Dashboard();
 
-    dashboard.registerAddIn("All","Component", SelectableTableAddIn);
+    dashboard.registerAddIn("All","component", SelectableTableAddIn);
 
     var topTenCustomerDefinition = {
       colHeaders: ["Customers","Sales"],
-      colTypes: ['string','numeric'],
+      colTypes: ['tableSelect','numeric'],
       colFormats: [null,'%.0f'],
       colWidths: ['500px',null],
       queryType: 'mdx',
@@ -228,12 +228,20 @@ require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent', 'cdf/addIns
       };
 
     dashboard.addComponent(new TableComponent(dashboard, {
+            mixins: [["selectableTable", {
+            selectAllParamName: "selectAllParam",
+            selectionListName: "selectionList",
+            updateCountersEventName: "updateCountersEvent",
+            selectedCountParamName: "selectedCountParam",
+            totalCountParamName: "totalCountParam",
+            selectableColIdx: 0
+
+            }]],
       name: "topTenCustomers",
       type: "tableComponent",
       chartDefinition: topTenCustomerDefinition,
       htmlObject: "sampleObject",
-      executeAtStart: true,
-      mixins: [["selectableTable", {}]]
+      executeAtStart: true
     }));
     dashboard.init();
 });
