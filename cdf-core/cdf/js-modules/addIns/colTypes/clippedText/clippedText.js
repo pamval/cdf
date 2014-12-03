@@ -50,7 +50,7 @@ define([
     }
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", clippedText);
+  Dashboard.registerGlobalAddIn("Table", "colType", clippedText);
 
   return clippedText;
 

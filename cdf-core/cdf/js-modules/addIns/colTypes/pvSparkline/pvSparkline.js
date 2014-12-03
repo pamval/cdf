@@ -105,7 +105,7 @@ define([
     }
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", pvSparkline);
+  Dashboard.registerGlobalAddIn("Table", "colType", pvSparkline);
 
   return pvSparkline;
 

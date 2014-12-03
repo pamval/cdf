@@ -56,7 +56,7 @@ define([
     }
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", trendArrow);
+  Dashboard.registerGlobalAddIn("Table", "colType", trendArrow);
 
   return trendArrow;
 

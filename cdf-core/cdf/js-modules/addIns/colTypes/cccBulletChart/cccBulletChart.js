@@ -83,7 +83,7 @@ define([
     }
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", bullet);
+  Dashboard.registerGlobalAddIn("Table", "colType", bullet);
 
   return bullet;
 

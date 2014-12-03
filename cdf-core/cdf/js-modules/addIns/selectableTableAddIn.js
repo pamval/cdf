@@ -12,40 +12,20 @@
  */
 
 
-define(['../dashboard/Dashboard', '../Logger'], function (Dashboards, Logger) {
+define(['../Dashboard',
+        '../Logger',
+        '../AddIn',
+        '../lib/jquery',
+        '../lib/datatables',
+        'css!./selectTable'],
+    function (Dashboard, Logger, AddIn, $) {
 
 
-    var addIn = { name: "selectableTable",
+    var addIn = {
+
+        name: "selectableTable",
         getName: function () {return "selectableTable";},
         label: "Selectable Table",
-        defaults: {
-            getSelectedList: function(){
-                return [];
-            },
-            getSelectAllStatus: function(){
-                return false;
-            },
-            buttons:[
-                {
-                    id: "selectBtn",
-                    cssClass: "selectButton",
-                    selectedCssClass: "selected",
-                    title: "Select",
-                    action: function(v, st) {
-                        Logger.log(v);
-                    }
-                }
-            ]
-        },
-
-        /**
-         * Initialization function for the component add-in (Optional)
-         *
-         */
-        init: function () {
-            $.fn.dataTableExt.oSort[this.name+'-asc'] = $.fn.dataTableExt.oSort['string-asc'];
-            $.fn.dataTableExt.oSort[this.name+'-desc'] = $.fn.dataTableExt.oSort['string-desc'];
-        },
 
         /**
          * Validation function (for future use)
@@ -92,11 +72,11 @@ define(['../dashboard/Dashboard', '../Logger'], function (Dashboards, Logger) {
 
                 // Select item AddIn
                 var selectOpts = {
-                    getSelectList: function(){
-                        return this.dashboard.getParameterValue(selectionListName);
+                    getSelectedList: function(){
+                        return myself.dashboard.getParameterValue(selectionListName);
                     },
                     getSelectAllStatus: function(){
-                        return this.dashboard.getParameterValue(selectAllParamName);
+                        return myself.dashboard.getParameterValue(selectAllParamName);
                     },
                     buttons: [
                         {
@@ -129,7 +109,7 @@ define(['../dashboard/Dashboard', '../Logger'], function (Dashboards, Logger) {
                         }
                     ]
                 };
-                myself.setAddInOptions("colType","tableSelect",selectOpts);
+                myself.setAddInOptions("colType","selectableTable",selectOpts);
             };
 
             this.selectableTable_clearSelection = function(selectionListName,selectAllParamName,selectedCountParamName,totalCountParamName){
@@ -416,25 +396,42 @@ define(['../dashboard/Dashboard', '../Logger'], function (Dashboards, Logger) {
             };
 
 
-
-
-
-
             return this;
+        }
+
+    };
+
+    Dashboard.registerGlobalAddIn("All", "component", addIn);
+
+
+
+    var colTypeAddIn = {
+        name: "selectableTable",
+        label: "Table Select",
+        defaults: {
+            getSelectedList: function(){
+                return [];
+            },
+            getSelectAllStatus: function(){
+                return false;
+            },
+            buttons:[
+                {
+                    id: "selectBtn",
+                    cssClass: "selectButton",
+                    selectedCssClass: "selected",
+                    title: "Select",
+                    action: function(v, st) {
+                        Logger.log(v);
+                    }
+                }
+            ]
         },
 
-
-
-
-
-        /**
-         * Optionally, the comopnent add-in can also expose an add-in of a different type.
-         * This can be useful for exposing, for instance, a col type that should be used along
-         * with a particular component add-in.
-         *
-         */
-        addInType: "Table",
-        addInSubType: "ColType",
+        init: function(){
+            $.fn.dataTableExt.oSort[this.name+'-asc'] = $.fn.dataTableExt.oSort['string-asc'];
+            $.fn.dataTableExt.oSort[this.name+'-desc'] = $.fn.dataTableExt.oSort['string-desc'];
+        },
 
         implementation: function(tgt, st, opt){
             var $buttonContainer = $('<div/>').addClass('buttonContainer')
@@ -445,11 +442,11 @@ define(['../dashboard/Dashboard', '../Logger'], function (Dashboards, Logger) {
                     .text(el.title||"");
 
                 if(opt.getSelectAllStatus() === false){
-                    if (opt.getSelectList().indexOf(st.value) > -1) {
+                    if (opt.getSelectedList().indexOf(st.value) > -1) {
                         $button.addClass(el.selectedCssClass);
                     }
                 } else {
-                    if (opt.getSelectList().indexOf(st.value) === -1) {
+                    if (opt.getSelectedList().indexOf(st.value) === -1) {
                         $button.addClass(el.selectedCssClass);
                     }
                 }
@@ -463,11 +460,12 @@ define(['../dashboard/Dashboard', '../Logger'], function (Dashboards, Logger) {
             $(tgt).empty().append($buttonContainer);
         }
 
-
     };
 
-//    Dashboard.registerGlobalAddIn("All", "component", addIn);
-    return addIn;
+
+
+    Dashboard.registerGlobalAddIn("Table", "colType", new AddIn(colTypeAddIn));
+
 
 
 });

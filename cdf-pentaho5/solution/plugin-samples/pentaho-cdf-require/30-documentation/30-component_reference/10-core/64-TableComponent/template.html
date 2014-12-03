@@ -198,7 +198,7 @@
         <li><a href="#code"><span>Code</span></a></li>
       </ul>
       <div id="sample">
-        <div id="sampleObject"></div>
+        <div id="sampleObject" class="selectionTable"></div>
         <br/>
       </div>
 
@@ -209,11 +209,9 @@ require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent', 'cdf/addIns
 
     var dashboard = new Dashboard();
 
-    dashboard.registerAddIn("All","component", SelectableTableAddIn);
-
     var topTenCustomerDefinition = {
       colHeaders: ["Customers","Sales"],
-      colTypes: ['tableSelect','numeric'],
+      colTypes: ['selectableTable','numeric'],
       colFormats: [null,'%.0f'],
       colWidths: ['500px',null],
       queryType: 'mdx',
@@ -226,6 +224,14 @@ require(['cdf/Dashboard.Blueprint', 'cdf/components/TableComponent', 'cdf/addIns
           " ON ROWS from [SteelWheelsSales]";
         }
       };
+
+        dashboard.addParameter("selectAllParam","");
+            dashboard.addParameter("selectionList",[]);
+            dashboard.addParameter("updateCountersEvent","");
+            dashboard.addParameter("selectedCountParam","");
+            dashboard.addParameter("totalCountParam","");
+
+
 
     dashboard.addComponent(new TableComponent(dashboard, {
             mixins: [["selectableTable", {

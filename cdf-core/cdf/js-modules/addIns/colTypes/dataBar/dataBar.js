@@ -106,7 +106,7 @@ define([
     }
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", dataBar);
+  Dashboard.registerGlobalAddIn("Table", "colType", dataBar);
 
   return dataBar;
 

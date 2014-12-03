@@ -98,7 +98,7 @@ define([
     }
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", groupHeaders);
+  Dashboard.registerGlobalAddIn("Table", "colType", groupHeaders);
 
   return groupHeaders;
 

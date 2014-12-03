@@ -65,7 +65,7 @@ define([
     
   });
 
-  Dashboard.registerGlobalAddIn("Table.colType", link);
+  Dashboard.registerGlobalAddIn("Table", "colType", link);
 
   return link;
 
