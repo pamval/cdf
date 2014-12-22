@@ -19,13 +19,20 @@ define([
 
 
   var globalAddIns = new Container();
-  
-  function normalizeAddInKey (key, subKey) {
-    if (key.indexOf('Component', key.length - 'Component'.length) !== -1) 
-        key = key.substring(0, key.length - 'Component'.length);  
-    key = key.charAt(0).toUpperCase() + key.substring(1);  
-    if(subKey) { key += "." + subKey; }  
-    return key;    
+
+  // Normalization - Ensure component does not finish with component and capitalize first letter
+  var CompSuffix = 'Component';
+  var CompSuffixLen = CompSuffix.length;
+
+  function normalizeAddInKey(key, subKey) {
+    if(key.indexOf(CompSuffix, key.length - CompSuffixLen) !== -1)
+      key = key.substring(0, key.length - CompSuffixLen);
+
+    key = key.charAt(0).toUpperCase() + key.substring(1);
+
+    if(subKey) { key += "." + subKey; }
+
+    return key;
   }
 
   Dashboard.registerGlobalAddIn = function(type, subType, addIn) {
@@ -34,56 +41,44 @@ define([
       globalAddIns.register(type, name, addIn);
   };
 
-
-
   Dashboard.implement({
-      
-    _initAddIns: function(){
+
+    _initAddIns: function() {
+      // [DCL] This most probably does NOT clone
+      // the way the writer wanted it to...
       this.addIns = Utils.clone(globalAddIns);
     },
-  
-    registerGlobalAddIn : function(type,subType,addIn){
-        Dashboard.registerGlobalAddIn(type, subType, addIn);
+
+    // [DCL] Either it is static or not...
+    registerGlobalAddIn: function(type, subType, addIn) {
+      Dashboard.registerGlobalAddIn(type, subType, addIn);
     },
 
-    registerAddIn : function(type,subType,addIn) {
+    registerAddIn: function(type, subType, addIn) {
       var type = normalizeAddInKey(type, subType),
           name = addIn.getName ? addIn.getName() : null;
       this.addIns.register(type, name, addIn);
     },
-  
 
-    hasAddIn : function(type,subType,addInName){
-      var type = normalizeAddInKey(type, subType);
-      return Boolean(this.addIns && this.addIns.has(type,addInName));
+    hasAddIn: function(type, subType, addInName) {
+      type = normalizeAddInKey(type, subType);
+      return this.addIns.has(type, addInName);
     },
-  
-    getAddIn : function(type,subType,addInName){
-      var type = normalizeAddInKey(type, subType);
-      try {
-        var addIn = this.addIns.get(type, addInName);
-        return addIn;
-      } catch(e) {
-        return null;
-      }
+
+    getAddIn: function(type, subType, addInName) {
+      type = normalizeAddInKey(type, subType);
+      return this.addIns.tryGet(type, addInName);
     },
-  
-    setAddInDefaults : function(type, subType, addInName, defaults) {
+
+    setAddInDefaults: function(type, subType, addInName, defaults) {
       var addIn = this.getAddIn(type, subType, addInName);
-      if(addIn) {
-        addIn.setDefaults(defaults);
-      }
+      if(addIn) addIn.setDefaults(defaults);
     },
-    
-    listAddIns : function(type, subType) {
-    var type = normalizeAddInKey(type, subType);
-      var addInList = [];
-      try {
-        return this.addIns.listType(type);
-      } catch (e) {
-        return [];
-      }
-    }                              
+
+    listAddIns: function(type, subType) {
+      var type = normalizeAddInKey(type, subType);
+      return this.addIns.tryListType(type) || [];
+    }
   });
-    
+
 });

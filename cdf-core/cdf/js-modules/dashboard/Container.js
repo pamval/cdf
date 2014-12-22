@@ -171,8 +171,9 @@ define(function () {
 
       var holder = getHolder(type, name, isTry);
 
-      // Can't store as singletons instances with special config params
-      if(config) { isNew = true;  } else
+      // Can't store as singletons, instances that have special config params
+      if(config) { isNew = true;  }
+      else
       if(!isNew) { config = {}; }
 
       return holder ? holder.build(config, isNew) : null;
